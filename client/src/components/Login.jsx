@@ -22,13 +22,11 @@ const Login = ({setPage}) => {
     }
   };
 
-// ✅ This function builds the hidden PIN from your .env
+
 const getHiddenPin = () => {
-  // ✅ Make sure this matches your .env:
-  // VITE_API_PIN_B64=MTEyMQ==
   const b64 = import.meta.env.VITE_API_PIN;
 
-  // ✅ Split it for mild obfuscation
+
   const scrambled = [
     b64.slice(0, 2),
     b64.slice(2, 4),
@@ -36,15 +34,13 @@ const getHiddenPin = () => {
   ];
 
   const joined = scrambled.join('');
-  return atob(joined); // decode base64 → "1121"
+  return atob(joined); 
 };
 
-// ✅ This function runs when you want to check the input
 const checkPin = () => {
-  // ✅ Join values from your input refs
+
   const pin = inputRefs.current.map(input => input.value).join('');
 
-  // ✅ Compare to the decoded hidden PIN
   if (pin === getHiddenPin()) {
     setPage("dashboard");
   } else {
