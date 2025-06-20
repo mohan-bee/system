@@ -22,19 +22,40 @@ const Login = ({setPage}) => {
     }
   };
 
-  const checkPin = () => {
-    const pin = inputRefs.current.map(input => input.value).join('');
-    console.log('Entered PIN:', pin);
-    if (pin === import.meta.env.VITE_API_PIN) {
-      setPage("dashboard")
-    } else {
-      alert('Incorrect PIN.');
-    }
-  };
+// ✅ This function builds the hidden PIN from your .env
+const getHiddenPin = () => {
+  // ✅ Make sure this matches your .env:
+  // VITE_API_PIN_B64=MTEyMQ==
+  const b64 = import.meta.env.VITE_API_PIN;
+
+  // ✅ Split it for mild obfuscation
+  const scrambled = [
+    b64.slice(0, 2),
+    b64.slice(2, 4),
+    b64.slice(4)
+  ];
+
+  const joined = scrambled.join('');
+  return atob(joined); // decode base64 → "1121"
+};
+
+// ✅ This function runs when you want to check the input
+const checkPin = () => {
+  // ✅ Join values from your input refs
+  const pin = inputRefs.current.map(input => input.value).join('');
+
+  // ✅ Compare to the decoded hidden PIN
+  if (pin === getHiddenPin()) {
+    setPage("dashboard");
+  } else {
+    alert('Incorrect PIN.');
+  }
+};
+
 
   return (
     <div className='flex h-screen items-center justify-center flex-col gap-2'>
-      <label className='text-lg '>Enter the Authorised PIN</label>
+      <label className='text-lg'>Enter the Authorised PIN</label>
       <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
         {Array.from({ length: 4 }).map((_, i) => (
           <input 
